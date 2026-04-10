@@ -35,7 +35,7 @@ export function Header() {
       className={cn(
         'sticky top-0 z-50 mx-auto w-full container border-transparent border-b md:rounded-md md:border md:transition-all md:ease-out py-4',
         {
-          'border-border bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/50 md:top-2 md:max-w-7xl md:shadow':
+          'border-border bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/50 md:top-2 md:max-w-6xl md:shadow border':
             scrolled,
         },
       )}>
@@ -79,17 +79,18 @@ export function Header() {
 
         <div className="flex items-center gap-4">
           <div className="hidden items-center gap-6 md:flex">
-            <button className="text-slate-800 hover:text-primary transition-colors">
+            <button className="text-slate-800 hover:text-primary transition-colors cursor-pointer">
               <ShoppingCart className="w-5 h-5" strokeWidth={1.5} />
             </button>
 
             <div className="flex items-center gap-[-2px]">
               <Button
                 variant="outline"
-                className="rounded-full border border-primary text-primary hover:bg-orange-50 hover:text-primary/80 px-6 h-10 font-medium bg-transparent">
+                className="rounded-full border border-primary text-primary hover:bg-orange-50 hover:text-primary/80 px-6 h-10 font-medium bg-transparent cursor-pointer">
                 Log In
               </Button>
-              <Button className="rounded-full bg-primary hover:bg-primary/80 text-white w-10 h-10 p-0 flex items-center justify-center shadow-none -ml-2 border border-white">
+
+              <Button className="rounded-full bg-primary hover:bg-primary/80 text-white w-10 h-10 p-0 flex items-center justify-center shadow-none ml-2 border border-white cursor-pointer">
                 <ArrowUpRight className="w-5 h-5" strokeWidth={2} />
               </Button>
             </div>
