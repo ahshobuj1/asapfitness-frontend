@@ -1,13 +1,13 @@
 'use client';
 
-import {cn} from '@/lib/utils';
-import {useScroll} from '@/hooks/use-scroll';
-import {Button} from '@/components/ui/button';
-import {MobileNav} from '@/components/mobile-nav';
+import { cn } from '@/lib/utils';
+import { useScroll } from '@/hooks/use-scroll';
+import { Button } from '@/components/ui/button';
+import { MobileNav } from '@/components/mobile-nav';
 import Link from 'next/link';
 import Image from 'next/image';
-import {ShoppingCart, ArrowUpRight} from 'lucide-react';
-import {usePathname} from 'next/navigation';
+import { ShoppingCart, ArrowUpRight } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 export const navLinks = [
   {
@@ -54,6 +54,7 @@ export function Header() {
             alt="Logo"
             width={100}
             height={100}
+            style={{width: 'auto'}}
           />
         </Link>
 

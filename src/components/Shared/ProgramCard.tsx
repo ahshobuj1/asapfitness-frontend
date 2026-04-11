@@ -1,8 +1,15 @@
 import {TProgram} from '@/types/program';
 import {ArrowRight} from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
-const ProgramCard = ({program}: {program: TProgram}) => {
+const ProgramCard = ({
+  program,
+  priority,
+}: {
+  program: TProgram;
+  priority?: boolean;
+}) => {
   return (
     <div className="group relative h-150 w-full rounded-2xl overflow-hidden cursor-pointer shadow-lg">
       <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-105">
@@ -11,6 +18,8 @@ const ProgramCard = ({program}: {program: TProgram}) => {
           alt={program.title}
           fill
           className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority={priority}
         />
       </div>
 
@@ -25,10 +34,12 @@ const ProgramCard = ({program}: {program: TProgram}) => {
           {program.description}
         </p>
 
-        <button className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-full flex justify-center items-center gap-2 transition-colors">
-          View All Programs
-          <ArrowRight className="w-4 h-4" />
-        </button>
+        <Link href={`/programs/${1}`}>
+          <button className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-full flex justify-center items-center gap-2 transition-colors cursor-pointer">
+            View All Classes
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </Link>
       </div>
     </div>
   );

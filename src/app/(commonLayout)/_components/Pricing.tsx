@@ -60,6 +60,7 @@ export default function Pricing() {
             alt="Pricing Lifestyle"
             fill
             className="object-cover"
+            sizes="(max-width: 1024px) 100vw, 800px"
           />
         </div>
       </div>

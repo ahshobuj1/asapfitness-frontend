@@ -48,8 +48,8 @@ export default function Programs() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {programsData.map((program) => (
-          <ProgramCard key={program.id} program={program} />
+        {programsData.map((program, index) => (
+          <ProgramCard key={program.id} program={program} priority={index < 3} />
         ))}
       </div>
     </section>

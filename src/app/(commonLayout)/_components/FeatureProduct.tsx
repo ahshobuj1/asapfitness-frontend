@@ -60,6 +60,7 @@ export default function FuelYourGainsSection() {
                   alt={product.title}
                   fill
                   className="object-cover p-8 transition-transform duration-500 group-hover:scale-110"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
               </div>
 

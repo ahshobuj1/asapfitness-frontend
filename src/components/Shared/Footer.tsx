@@ -32,6 +32,7 @@ export default function Footer() {
               width={220}
               height={120}
               className="w-auto h-24 object-contain"
+              style={{width: 'auto'}}
             />
           </div>
 
@@ -86,6 +87,7 @@ export default function Footer() {
                 type="email"
                 placeholder="Your email"
                 className="w-full bg-[#1C212D] text-white rounded-full py-3.5 pl-5 pr-14 focus:outline-none focus:ring-1 focus:ring-primary border border-transparent placeholder:text-gray-500 text-sm"
+                suppressHydrationWarning
               />
               <button className="absolute right-1.5 bg-primary hover:bg-primary/80 transition-colors rounded-full p-2.5 text-white flex items-center justify-center">
                 <ArrowRight className="w-5 h-5" />

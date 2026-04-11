@@ -30,6 +30,7 @@ export default function WhyTrainWithUsSection() {
               alt="Professional Trainer"
               fill
               className="object-cover object-top"
+              sizes="(max-width: 1024px) 100vw, 50vw"
             />
           </div>
 
