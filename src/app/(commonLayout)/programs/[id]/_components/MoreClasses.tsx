@@ -1,4 +1,4 @@
-import {ClassCard} from '@/components/Shared/ClassCard';
+import { ClassCard } from '@/components/Shared/ClassCard';
 import {
   Carousel,
   CarouselContent,
@@ -6,7 +6,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import {TClassCard} from '@/types/class';
+import { TClassCard } from '@/types/class';
 
 const moreClassesData: TClassCard[] = [
   {
