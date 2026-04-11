@@ -1,6 +1,7 @@
-import Image from 'next/image';
+import {ProductCard} from '@/components/Shared/ProductCard';
+import {TProduct} from '@/types/product';
 
-const productsData = [
+const productsData: TProduct[] = [
   {
     id: 1,
     category: 'Protein',
@@ -50,43 +51,8 @@ export default function FuelYourGainsSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {productsData.map((product) => (
-            <div
-              key={product.id}
-              className="flex flex-col rounded-2xl overflow-hidden shadow-lg group">
-              <div className="bg-white h-90 relative p-8 flex justify-center items-center overflow-hidden">
-                <Image
-                  src={product.image}
-                  alt={product.title}
-                  fill
-                  className="object-cover p-8 transition-transform duration-500 group-hover:scale-110"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-              </div>
-
-              <div className="bg-[#333B4A] p-6 flex flex-col grow">
-                <span className="text-gray-400 text-sm mb-2">
-                  {product.category}
-                </span>
-                <h3 className="text-xl  text-white mb-2">{product.title}</h3>
-                <p className="text-gray-400 text-sm mb-6 grow">
-                  {product.description}
-                </p>
-
-                <div className="flex items-end gap-3 mb-6">
-                  <span className="text-2xl font-bold text-white">
-                    {product.price}
-                  </span>
-                  <span className="text-gray-500 line-through text-base mb-0.5">
-                    {product.oldPrice}
-                  </span>
-                </div>
-
-                <button className="w-full bg-primary hover:bg-primary/80 text-white font-medium py-3 px-4 rounded-full transition-colors mt-auto cursor-pointer">
-                  Add to Cart
-                </button>
-              </div>
-            </div>
+          {productsData.map((product: TProduct) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </div>
