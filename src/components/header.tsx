@@ -7,35 +7,37 @@ import {MobileNav} from '@/components/mobile-nav';
 import Link from 'next/link';
 import Image from 'next/image';
 import {ShoppingCart, ArrowUpRight} from 'lucide-react';
+import {usePathname} from 'next/navigation';
 
 export const navLinks = [
   {
     label: 'Home',
-    href: '#',
+    href: '/',
   },
   {
     label: 'Programs',
-    href: '#',
+    href: '/programs',
   },
   {
     label: 'Shop',
-    href: '#',
+    href: '/shop',
   },
   {
     label: 'Pricing',
-    href: '#',
+    href: '/pricing',
   },
 ];
 
 export function Header() {
   const scrolled = useScroll(10);
+  const pathname = usePathname();
 
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 mx-auto w-full container border-transparent border-b md:rounded-md md:border md:transition-all md:ease-out py-4',
+        'sticky top-0 z-50 mx-auto w-full container border-transparent border-b md:rounded-full md:border md:transition-all md:ease-out py-4',
         {
-          'border-border bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/50 md:top-2 md:max-w-6xl md:shadow border':
+          'border-border bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/50 md:top-2 md:max-w-7xl md:shadow border':
             scrolled,
         },
       )}>
@@ -46,7 +48,7 @@ export function Header() {
             'md:px-2': scrolled,
           },
         )}>
-        <Link className="rounded-md p-2 hover:bg-muted" href="/">
+        <Link className="rounded-md py-2 hover:bg-muted" href="/">
           <Image
             src="/images/home/Logo.png"
             alt="Logo"
@@ -56,25 +58,29 @@ export function Header() {
         </Link>
 
         <div className="hidden flex-1 items-center justify-center md:flex gap-2">
-          {navLinks.map((link) => (
-            <Button
-              asChild
-              key={link.label}
-              size="sm"
-              variant="ghost"
-              className="text-lg hover:bg-transparent">
-              <Link
-                href={link.href}
-                className={cn(
-                  'text-base font-medium transition-colors',
-                  link.label === 'Home'
-                    ? 'text-primary hover:text-primary/80'
-                    : 'text-slate-700 hover:text-primary',
-                )}>
-                {link.label}
-              </Link>
-            </Button>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+
+            return (
+              <Button
+                asChild
+                key={link.label}
+                size="sm"
+                variant="ghost"
+                className="text-lg hover:bg-transparent">
+                <Link
+                  href={link.href}
+                  className={cn(
+                    'text-base font-medium transition-colors',
+                    isActive
+                      ? 'text-primary hover:text-primary/80'
+                      : 'text-slate-700 hover:text-primary',
+                  )}>
+                  {link.label}
+                </Link>
+              </Button>
+            );
+          })}
         </div>
 
         <div className="flex items-center gap-4">
@@ -90,7 +96,7 @@ export function Header() {
                 Log In
               </Button>
 
-              <Button className="rounded-full bg-primary hover:bg-primary/80 text-white w-10 h-10 p-0 flex items-center justify-center shadow-none ml-2 border border-white cursor-pointer">
+              <Button className="rounded-full bg-primary hover:bg-primary/80 text-white w-10 h-10 p-0 flex items-center justify-center shadow-none -ml-0.4 border border-white cursor-pointer">
                 <ArrowUpRight className="w-5 h-5" strokeWidth={2} />
               </Button>
             </div>

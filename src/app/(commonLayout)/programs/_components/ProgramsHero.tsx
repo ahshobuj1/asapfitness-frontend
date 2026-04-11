@@ -27,20 +27,16 @@ const programsData = [
   },
 ];
 
-export default function Programs() {
+export default function ProgramsHero() {
   return (
-    <section className="container max-w-7xl py-16 md:py-24">
+    <section className="container max-w-7xl pt-6 md:pt-10 pb-16 md:pb-24">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
         <div className="flex flex-col">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
-            Transform
+          <h2 className="text-4xl md:text-5xl font-semibold text-foreground leading-tight">
+            Programs
           </h2>
-          <h2 className="text-4xl md:text-5xl font-bold text-primary leading-tight">
-            Your Body
-          </h2>
-        </div>
-        <div className="max-w-md">
-          <p className="text-gray-500 text-sm md:text-base leading-relaxed">
+
+          <p className="text-gray-500 text-sm md:text-base leading-relaxed mt-4">
             Choose from 3 expert-designed training categories, each with 10
             progressive programs tailored to your goals.
           </p>
