@@ -1,13 +1,13 @@
 'use client';
-import { cn } from '@/lib/utils';
-import { useScroll } from '@/hooks/use-scroll';
-import { Button } from '@/components/ui/button';
-import { MobileNav } from '@/components/mobile-nav';
+import {cn} from '@/lib/utils';
+import {useScroll} from '@/hooks/use-scroll';
+import {Button} from '@/components/ui/button';
+import {MobileNav} from '@/components/mobile-nav';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowUpRight } from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import { CartModal } from './Shared/CartModal';
+import {ArrowUpRight} from 'lucide-react';
+import {usePathname} from 'next/navigation';
+import {CartModal} from './Shared/CartModal';
 
 export const navLinks = [
   {
@@ -34,18 +34,21 @@ export function Header() {
 
   return (
     <header
-      className={cn('sticky top-0 transition-all duration-300 z-50 w-full border-transparent border-b py-3', {
-        'border-border bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/90':
-          scrolled,
-      })}>
-      <nav className="mx-auto flex h-14 w-full max-w-[1480px] items-center justify-between px-4">
+      className={cn(
+        'sticky top-0 transition-all duration-200 z-50 w-full border-transparent border-b py-3',
+        {
+          'border-border bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/90':
+            scrolled,
+        },
+      )}>
+      <nav className="mx-auto flex h-14 w-full max-w-370 items-center justify-between px-4">
         <Link className="rounded-md py-2 hover:bg-muted" href="/">
           <Image
             src="/images/home/Logo.png"
             alt="Logo"
             width={80}
             height={80}
-            style={{ width: 'auto' }}
+            style={{width: 'auto'}}
           />
         </Link>
         <div className="hidden items-center md:flex gap-2">
@@ -78,11 +81,13 @@ export function Header() {
           <CartModal />
 
           <div className="flex items-center gap-[-2px]">
-            <Button
-              variant="outline"
-              className="rounded-full border border-primary text-primary hover:bg-orange-50 hover:text-primary/80 px-6 h-10 font-medium bg-transparent cursor-pointer">
-              Log In
-            </Button>
+            <Link href={'/auth/login'}>
+              <Button
+                variant="outline"
+                className="rounded-full border border-primary text-primary hover:bg-orange-50 hover:text-primary/80 px-6 h-10 font-medium bg-transparent cursor-pointer">
+                Log In
+              </Button>
+            </Link>
 
             <Button className="rounded-full bg-primary hover:bg-primary/80 text-white w-10 h-10 p-0 flex items-center justify-center shadow-none -ml-0.4 border border-white cursor-pointer">
               <ArrowUpRight className="w-5 h-5" strokeWidth={2} />
