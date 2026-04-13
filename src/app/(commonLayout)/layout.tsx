@@ -1,4 +1,4 @@
-import {Header} from '@/components/header';
+import { Header } from '@/components/header';
 import Footer from '@/components/Shared/Footer';
 
 export default function CommonLayout({
