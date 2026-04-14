@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import {useState} from 'react';
 import Link from 'next/link';
-import { ArrowLeft, EyeOff, Eye } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import {ArrowLeft, EyeOff, Eye} from 'lucide-react';
+import {Button} from '@/components/ui/button';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
 const loginSchema = z.object({
@@ -21,7 +21,7 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
@@ -54,8 +54,9 @@ export default function LoginPage() {
                   placeholder="Email"
                   {...register('email')}
                   suppressHydrationWarning
-                  className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${errors.email ? 'ring-2 ring-red-500' : ''
-                    }`}
+                  className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${
+                    errors.email ? 'ring-2 ring-red-500' : ''
+                  }`}
                 />
                 {errors.email && (
                   <span className="text-red-500 text-xs mt-1.5 ml-4 font-medium">
@@ -70,8 +71,9 @@ export default function LoginPage() {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Password"
                     {...register('password')}
-                    className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 pr-12 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${errors.password ? 'ring-2 ring-red-500' : ''
-                      }`}
+                    className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 pr-12 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${
+                      errors.password ? 'ring-2 ring-red-500' : ''
+                    }`}
                   />
                   <button
                     type="button"
@@ -94,7 +96,7 @@ export default function LoginPage() {
 
             <div className="flex justify-end mb-8 mt-2">
               <Link
-                href="/forgot-password"
+                href="/auth/reset-password"
                 className="text-xs text-[#E74C3C] hover:underline font-medium">
                 Forgot Password
               </Link>
@@ -119,7 +121,7 @@ export default function LoginPage() {
           </p>
 
           <p className="text-sm text-center text-slate-800 font-medium mt-4">
-            Dont have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link
               href="/auth/register"
               className="text-primary/80 hover:underline font-bold">

@@ -70,7 +70,7 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex flex-col relative">
       <Link
-        href="/"
+        href={'/'}
         className="absolute top-8 left-8 w-12 h-12 bg-[#EAECEF] rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
         <ArrowLeft className="w-5 h-5 text-slate-600" strokeWidth={2} />
       </Link>
