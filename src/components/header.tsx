@@ -44,7 +44,7 @@ export function Header() {
       <nav className="mx-auto flex h-14 w-full max-w-370 items-center justify-between px-4">
         <Link className="rounded-md py-2 hover:bg-muted" href="/">
           <Image
-            src="/images/home/Logo.png"
+            src="/images/home/logo-primary-asap.png"
             alt="Logo"
             width={80}
             height={80}

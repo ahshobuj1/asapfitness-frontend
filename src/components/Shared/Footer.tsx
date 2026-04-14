@@ -27,7 +27,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="flex flex-col items-start justify-center">
             <Image
-              src="/images/home/Logo.png"
+              src="/images/home/logo-primary-asap.png"
               alt="A.S.A.P. Personal Training"
               width={220}
               height={120}
