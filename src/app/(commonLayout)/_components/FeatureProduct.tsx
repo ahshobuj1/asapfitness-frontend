@@ -38,10 +38,10 @@ export default function FuelYourGainsSection() {
       <div className="container mx-auto max-w-7xl">
         <div className="flex flex-row justify-between items-end mb-10">
           <div className="flex flex-col">
-            <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
+            <h2 className="text-2xl md:text-5xl font-extrabold text-white leading-tight">
               Fuel Your
             </h2>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-primary leading-tight">
+            <h2 className="text-2xl md:text-5xl font-extrabold text-primary leading-tight">
               Gains
             </h2>
           </div>

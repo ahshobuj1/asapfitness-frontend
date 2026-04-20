@@ -1,12 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import {useState} from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import {ArrowLeft, EyeOff, Eye} from 'lucide-react';
-import {Button} from '@/components/ui/button';
-import {useForm} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
+import { ArrowLeft, EyeOff, Eye } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useRouter } from 'next/navigation';
+import { useLoginMutation } from '@/redux/features/auth.api';
+import { useAppDispatch } from '@/redux/hooks';
+import { setUser } from '@/redux/features/authSlice';
+import { toast } from 'sonner';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
@@ -16,18 +22,32 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState(false);
+  const [login, { isLoading }] = useLoginMutation();
 
   const {
     register,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      const result = await login(data).unwrap();
+      const { user, accessToken } = result.data;
+      
+      dispatch(setUser({ user, token: accessToken }));
+      
+      toast.success('Login successful!');
+      router.push('/'); // Redirect to home or dashboard
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      toast.error(error?.data?.message || 'Login failed. Please check your credentials.');
+    }
   };
 
   return (
@@ -54,9 +74,8 @@ export default function LoginPage() {
                   placeholder="Email"
                   {...register('email')}
                   suppressHydrationWarning
-                  className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${
-                    errors.email ? 'ring-2 ring-red-500' : ''
-                  }`}
+                  className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${errors.email ? 'ring-2 ring-red-500' : ''
+                    }`}
                 />
                 {errors.email && (
                   <span className="text-red-500 text-xs mt-1.5 ml-4 font-medium">
@@ -71,9 +90,8 @@ export default function LoginPage() {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Password"
                     {...register('password')}
-                    className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 pr-12 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${
-                      errors.password ? 'ring-2 ring-red-500' : ''
-                    }`}
+                    className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 pr-12 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${errors.password ? 'ring-2 ring-red-500' : ''
+                      }`}
                   />
                   <button
                     type="button"
@@ -104,8 +122,9 @@ export default function LoginPage() {
 
             <Button
               type="submit"
+              disabled={isLoading}
               className="w-full bg-primary/80 hover:bg-primary/80 cursor-pointer text-white font-bold py-6 rounded-full transition-colors text-base mb-6">
-              Log In
+              {isLoading ? 'Logging In...' : 'Log In'}
             </Button>
           </form>
 

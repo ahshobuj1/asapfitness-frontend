@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import {useState, useRef} from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
-import {ArrowLeft, EyeOff, Eye, Camera, X} from 'lucide-react';
-import {Button} from '@/components/ui/button';
-import {useForm, Controller} from 'react-hook-form';
-import {zodResolver} from '@hookform/resolvers/zod';
+import { ArrowLeft, EyeOff, Eye, Camera, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
   Select,
@@ -15,10 +16,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useUploadFileMutation } from '@/redux/features/file.api';
+import { useRegisterMutation } from '@/redux/features/auth.api';
+import { toast } from 'sonner';
 
 const signupSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+  fullName: z.string().min(1, 'Name is required'),
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
+  phoneNumber: z.string().min(1, 'Phone number is required'),
   age: z.string().min(1, 'Age is required'),
   gender: z.string().min(1, 'Gender is required'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
@@ -29,13 +35,18 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  const [uploadFile, { isLoading: isUploading }] = useUploadFileMutation();
+  const [registerUser, { isLoading: isRegistering }] = useRegisterMutation();
 
   const {
     register,
     handleSubmit,
     control,
-    formState: {errors},
+    formState: { errors },
   } = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -43,14 +54,35 @@ export default function SignupPage() {
     },
   });
 
-  const onSubmit = (data: SignupFormValues) => {
-    console.log(data);
-    console.log('Preview Image Base64:', previewImage);
+  const onSubmit = async (values: SignupFormValues) => {
+    try {
+      let avatarKey = '';
+
+      if (selectedFile) {
+        const uploadRes = await uploadFile(selectedFile).unwrap();
+        avatarKey = uploadRes.data.key;
+      }
+
+      const registerData = {
+        ...values,
+        age: Number(values.age),
+        avatarKey,
+        role: 'customer',
+      };
+
+      await registerUser(registerData).unwrap();
+      toast.success('Registration successful! Please verify your email.');
+      router.push(`/auth/verification?email=${encodeURIComponent(values.email)}`);
+    } catch (error: any) {
+      console.error('Registration failed:', error);
+      toast.error(error?.data?.message || 'Registration failed. Please try again.');
+    }
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result as string);
@@ -62,6 +94,7 @@ export default function SignupPage() {
   const handleRemoveImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     setPreviewImage(null);
+    setSelectedFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -128,15 +161,14 @@ export default function SignupPage() {
               <div className="flex flex-col w-full">
                 <input
                   type="text"
-                  placeholder="Name"
-                  {...register('name')}
-                  className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${
-                    errors.name ? 'ring-2 ring-red-500' : ''
-                  }`}
+                  placeholder="Full Name"
+                  {...register('fullName')}
+                  className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${errors.fullName ? 'ring-2 ring-red-500' : ''
+                    }`}
                 />
-                {errors.name && (
+                {errors.fullName && (
                   <span className="text-red-500 text-xs mt-1.5 ml-4 font-medium">
-                    {errors.name.message}
+                    {errors.fullName.message}
                   </span>
                 )}
               </div>
@@ -147,13 +179,27 @@ export default function SignupPage() {
                   placeholder="Email"
                   {...register('email')}
                   suppressHydrationWarning
-                  className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${
-                    errors.email ? 'ring-2 ring-red-500' : ''
-                  }`}
+                  className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${errors.email ? 'ring-2 ring-red-500' : ''
+                    }`}
                 />
                 {errors.email && (
                   <span className="text-red-500 text-xs mt-1.5 ml-4 font-medium">
                     {errors.email.message}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex flex-col w-full">
+                <input
+                  type="text"
+                  placeholder="Phone Number"
+                  {...register('phoneNumber')}
+                  className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${errors.phoneNumber ? 'ring-2 ring-red-500' : ''
+                    }`}
+                />
+                {errors.phoneNumber && (
+                  <span className="text-red-500 text-xs mt-1.5 ml-4 font-medium">
+                    {errors.phoneNumber.message}
                   </span>
                 )}
               </div>
@@ -164,9 +210,8 @@ export default function SignupPage() {
                     type="number"
                     placeholder="Age"
                     {...register('age')}
-                    className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${
-                      errors.age ? 'ring-2 ring-red-500' : ''
-                    }`}
+                    className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${errors.age ? 'ring-2 ring-red-500' : ''
+                      }`}
                   />
                   {errors.age && (
                     <span className="text-red-500 text-xs mt-1.5 ml-4 font-medium">
@@ -179,14 +224,13 @@ export default function SignupPage() {
                   <Controller
                     name="gender"
                     control={control}
-                    render={({field}) => (
+                    render={({ field }) => (
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}>
                         <SelectTrigger
-                          className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-6 border-none shadow-none focus:ring-2 focus:ring-primary focus:ring-offset-0 text-sm font-medium ${
-                            errors.gender ? 'ring-2 ring-red-500' : ''
-                          }`}>
+                          className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-6 border-none shadow-none focus:ring-2 focus:ring-primary focus:ring-offset-0 text-sm font-medium ${errors.gender ? 'ring-2 ring-red-500' : ''
+                            }`}>
                           <SelectValue
                             placeholder="Gender"
                             className="text-gray-500"
@@ -226,9 +270,8 @@ export default function SignupPage() {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Password"
                     {...register('password')}
-                    className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 pr-12 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${
-                      errors.password ? 'ring-2 ring-red-500' : ''
-                    }`}
+                    className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 pr-12 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${errors.password ? 'ring-2 ring-red-500' : ''
+                      }`}
                   />
                   <button
                     type="button"
@@ -251,8 +294,9 @@ export default function SignupPage() {
 
             <Button
               type="submit"
+              disabled={isUploading || isRegistering}
               className="w-full bg-primary/80 hover:bg-primary/80 cursor-pointer text-white font-bold py-6 rounded-full transition-colors text-base mb-6">
-              Create Account
+              {isUploading ? 'Uploading Image...' : isRegistering ? 'Creating Account...' : 'Create Account'}
             </Button>
           </form>
 

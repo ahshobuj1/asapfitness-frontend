@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import Link from 'next/link';
@@ -6,6 +7,9 @@ import {Button} from '@/components/ui/button';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useRouter } from 'next/navigation';
+import { useRequestPasswordResetMutation } from '@/redux/features/auth.api';
+import { toast } from 'sonner';
 
 const resetSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email address'),
@@ -14,6 +18,9 @@ const resetSchema = z.object({
 type ResetFormValues = z.infer<typeof resetSchema>;
 
 export default function ResetPasswordPage() {
+  const router = useRouter();
+  const [requestReset, { isLoading }] = useRequestPasswordResetMutation();
+
   const {
     register,
     handleSubmit,
@@ -22,8 +29,15 @@ export default function ResetPasswordPage() {
     resolver: zodResolver(resetSchema),
   });
 
-  const onSubmit = (data: ResetFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: ResetFormValues) => {
+    try {
+      await requestReset(data).unwrap();
+      toast.success('Reset code sent to your email.');
+      router.push(`/auth/new-password?email=${encodeURIComponent(data.email)}`);
+    } catch (error: any) {
+      console.error('Reset request failed:', error);
+      toast.error(error?.data?.message || 'Failed to send reset code.');
+    }
   };
 
   return (
@@ -65,8 +79,9 @@ export default function ResetPasswordPage() {
 
             <Button
               type="submit"
+              disabled={isLoading}
               className="w-full bg-primary hover:bg-primary/80 text-white font-bold cursor-pointer py-6 rounded-full transition-colors text-base mt-2">
-              Send Code
+              {isLoading ? 'Sending...' : 'Send Code'}
             </Button>
           </form>
         </div>

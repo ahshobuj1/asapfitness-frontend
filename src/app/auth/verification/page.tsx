@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import Link from 'next/link';
@@ -6,24 +7,66 @@ import {Button} from '@/components/ui/button';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useVerifyEmailMutation, useResendOtpMutation } from '@/redux/features/auth.api';
+import { useAppDispatch } from '@/redux/hooks';
+import { setUser } from '@/redux/features/authSlice';
+import { toast } from 'sonner';
 
 const verificationSchema = z.object({
-  code: z.number().min(5, 'Verification code is required'),
+  code: z.string().min(6, 'Verification code must be 6 digits'),
 });
 
 type VerificationFormValues = z.infer<typeof verificationSchema>;
 
-export default function VerificationCodePage() {
+export default function VerificationPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get('email');
+  const dispatch = useAppDispatch();
+
+  const [verifyEmail, { isLoading: isVerifying }] = useVerifyEmailMutation();
+  const [resendOtp, { isLoading: isResending }] = useResendOtpMutation();
+
   const {
     register,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm<VerificationFormValues>({
     resolver: zodResolver(verificationSchema),
   });
 
-  const onSubmit = (data: VerificationFormValues) => {
-    console.log(data);
+  const onSubmit = async (data: VerificationFormValues) => {
+    try {
+      const result = await verifyEmail({ token: data.code }).unwrap();
+      const { user, accessToken } = result.data;
+      
+      if (accessToken && user) {
+        dispatch(setUser({ user, token: accessToken }));
+        toast.success('Email verified successfully!');
+        router.push('/');
+      } else {
+        toast.success('Email verified! Please log in.');
+        router.push('/auth/login');
+      }
+    } catch (error: any) {
+      console.error('Verification failed:', error);
+      toast.error(error?.data?.message || 'Verification failed. Please check the code.');
+    }
+  };
+
+  const handleResend = async () => {
+    if (!email) {
+      toast.error('Email not found. Please try registering again.');
+      return;
+    }
+    try {
+      await resendOtp({ email }).unwrap();
+      toast.success('Verification code resent successfully!');
+    } catch (error: any) {
+      console.error('Resend OTP failed:', error);
+      toast.error(error?.data?.message || 'Failed to resend code.');
+    }
   };
 
   return (
@@ -41,7 +84,7 @@ export default function VerificationCodePage() {
           </h1>
 
           <p className="text-sm text-gray-500 text-center mb-8 px-4">
-            Reset you password quickly and securely to regain access.
+            Enter the code sent to your email to verify your account.
           </p>
 
           <form
@@ -49,7 +92,7 @@ export default function VerificationCodePage() {
             className="flex flex-col w-full gap-4">
             <div className="flex flex-col w-full">
               <input
-                type="number"
+                type="text"
                 placeholder="Enter verification code"
                 {...register('code')}
                 className={`w-full bg-[#EAECEF] text-slate-900 rounded-full px-6 py-3.5 outline-none focus:ring-2 focus:ring-primary transition-all placeholder:text-gray-500 text-sm font-medium ${
@@ -65,8 +108,9 @@ export default function VerificationCodePage() {
 
             <Button
               type="submit"
+              disabled={isVerifying}
               className="w-full bg-primary hover:bg-primary/80 text-white font-bold cursor-pointer py-6 rounded-full transition-colors text-base mt-2 mb-4">
-              Verify
+              {isVerifying ? 'Verifying...' : 'Verify'}
             </Button>
           </form>
 
@@ -74,8 +118,10 @@ export default function VerificationCodePage() {
             Didn&apos;t Get The Code?{' '}
             <button
               type="button"
-              className="text-primary hover:underline font-bold focus:outline-none">
-              Resend it
+              onClick={handleResend}
+              disabled={isResending}
+              className="text-primary hover:underline font-bold focus:outline-none disabled:text-gray-400">
+              {isResending ? 'Sending...' : 'Resend it'}
             </button>
           </p>
         </div>
