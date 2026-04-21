@@ -2,7 +2,7 @@ import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
 import type {RootState} from '../store';
 import {logout} from '../features/authSlice';
 
-const BASE_URL = 'https://galilea-subcarinated-overscrupulously.ngrok-free.dev';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://galilea-subcarinated-overscrupulously.ngrok-free.dev';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: `${BASE_URL}`,
@@ -35,6 +35,6 @@ export const baseApi = createApi({
 
     return result;
   },
-  tagTypes: ['auth', 'user'],
+  tagTypes: ['auth', 'user', 'cart'],
   endpoints: () => ({}),
 });

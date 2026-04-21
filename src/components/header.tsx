@@ -140,7 +140,8 @@ export function Header() {
                   className="w-10 h-10 rounded-full border-2 border-primary overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
                   {userData?.data?.avatarUrl ? (
                     <Image
-                      src={userData.data.avatarUrl}
+                      src='/images/home/user-profile-asap.png'
+                      // src={userData.data.avatarUrl}
                       alt="Profile"
                       width={40}
                       height={40}

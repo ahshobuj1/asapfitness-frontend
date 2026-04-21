@@ -1,9 +1,16 @@
+import {TProduct} from './product';
+
 export type TShoppingCartItem = {
-  id: number | string;
-  category: string;
-  title: string;
-  description: string;
-  price: string;
-  image: string;
+  id: string;
+  userId: string;
+  productId: string;
   quantity: number;
+  createdAt: string;
+  updatedAt: string;
+  product: TProduct;
+};
+
+export type TCart = {
+  items: TShoppingCartItem[];
+  subtotal: number;
 };
