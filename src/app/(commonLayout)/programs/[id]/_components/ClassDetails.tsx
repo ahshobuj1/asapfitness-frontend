@@ -1,35 +1,45 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import {
   ArrowLeft,
   Play,
   Clock,
-  CalendarDays,
-  Activity,
   User,
   CheckCircle2,
-  Lock,
   ArrowRight,
 } from 'lucide-react';
 import {Button} from '@/components/ui/button';
+import {useGetSingleClassQuery} from '@/redux/features/lms.api';
+import {TClassCard} from '@/types/class';
 
-const classList = [
-  {id: 1, title: 'Class 1: Introduction', status: 'completed'},
-  {id: 2, title: 'Class 2: Foundation', status: 'completed'},
-  {id: 3, title: 'Class 3: Cardio Warmup', status: 'current'},
-  {id: 4, title: 'Class 4: Cool Down', status: 'locked'},
-];
+export default function ClassDetails({
+  categoryId,
+  classId,
+  classes,
+}: {
+  categoryId: string;
+  classId: string;
+  classes: TClassCard[];
+}) {
+  const {data: classData, isLoading} = useGetSingleClassQuery({
+    categoryId,
+    classId,
+  });
 
-const achievements = [
-  'Learn proper form',
-  'Build strength foundation',
-  'Gain first 5 lbs of muscle',
-  'Develop gym confidence',
-];
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-6 py-10 max-w-7xl flex justify-center items-center h-96">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
-const equipment = ['Dumbbells', 'Bench', 'Barbell (optional)'];
+  const singleClass = classData?.data;
 
-export default async function ClassDetails() {
+  if (!singleClass) return null;
+
   return (
     <div className="container mx-auto px-6 py-10 max-w-7xl">
       <Link
@@ -41,11 +51,10 @@ export default async function ClassDetails() {
 
       <div className="mb-8">
         <h1 className="text-3xl md:text-4xl font-semibold text-slate-900 mb-3">
-          Basic Program
+          {singleClass.title}
         </h1>
         <p className="text-gray-500 text-sm md:text-base">
-          Perfect for beginners starting their fitness journey with simple,
-          guided workouts.
+          {singleClass.subtitle}
         </p>
       </div>
 
@@ -53,8 +62,9 @@ export default async function ClassDetails() {
         <div className="lg:col-span-2 flex flex-col gap-6">
           <div className="relative w-full aspect-16/10 md:aspect-video rounded-2xl overflow-hidden group cursor-pointer shadow-sm">
             <Image
-              src="/images/home/programs/program-video.png"
-              alt="Class Video"
+              // src={singleClass.thumbUrl || "/images/home/programs/program-video.png"}
+              src={"/images/home/classes/class-3.png"}
+              alt={singleClass.title}
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
@@ -68,12 +78,10 @@ export default async function ClassDetails() {
 
           <div className="bg-[#F8F9FA] rounded-2xl p-6 md:p-8">
             <h2 className="text-2xl font-semibold text-slate-900 mb-3">
-              Class 1: Introduction
+              {singleClass.title}
             </h2>
             <p className="text-gray-500 text-sm leading-relaxed mb-8">
-              The perfect starting point for anyone new to weight training.
-              Learn proper form, build a strength foundation, and start seeing
-              muscle gains within the first month.
+              {singleClass.subtitle}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
@@ -83,25 +91,7 @@ export default async function ClassDetails() {
                   <span className="text-sm font-medium">Duration</span>
                 </div>
                 <span className="text-lg font-semibold text-slate-900">
-                  8 Weeks
-                </span>
-              </div>
-              <div className="bg-white rounded-xl p-5 flex flex-col gap-2 shadow-sm">
-                <div className="flex items-center gap-2 text-gray-500">
-                  <CalendarDays className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">Frequency</span>
-                </div>
-                <span className="text-lg font-semibold text-slate-900">
-                  3x per week
-                </span>
-              </div>
-              <div className="bg-white rounded-xl p-5 flex flex-col gap-2 shadow-sm">
-                <div className="flex items-center gap-2 text-gray-500">
-                  <Activity className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">Difficulty</span>
-                </div>
-                <span className="text-lg font-semibold text-slate-900">
-                  Beginner
+                  {Math.floor(singleClass.durationSeconds / 60)} Minutes
                 </span>
               </div>
               <div className="bg-white rounded-xl p-5 flex flex-col gap-2 shadow-sm">
@@ -110,39 +100,43 @@ export default async function ClassDetails() {
                   <span className="text-sm font-medium">Trainer</span>
                 </div>
                 <span className="text-lg font-semibold text-slate-900">
-                  Jake Torres
+                  {singleClass.trainerName || 'N/A'}
                 </span>
               </div>
             </div>
 
-            <div className="mb-10">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">
-                What you&apos;ll achieve
-              </h3>
-              <ul className="flex flex-col gap-3">
-                {achievements.map((item, index) => (
-                  <li key={index} className="flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                    <span className="text-sm text-gray-600">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">
-                Equipment need
-              </h3>
-              <div className="flex flex-wrap gap-3">
-                {equipment.map((item, index) => (
-                  <span
-                    key={index}
-                    className="bg-[#E9ECEF] text-slate-700 text-sm font-medium px-4 py-2 rounded-full">
-                    {item}
-                  </span>
-                ))}
+            {singleClass.achievements && singleClass.achievements.length > 0 && (
+              <div className="mb-10">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                  What you&apos;ll achieve
+                </h3>
+                <ul className="flex flex-col gap-3">
+                  {singleClass.achievements.map((item, index) => (
+                    <li key={index} className="flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
+                      <span className="text-sm text-gray-600">{item}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
+            )}
+
+            {singleClass.equipmentName && singleClass.equipmentName.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                  Equipment need
+                </h3>
+                <div className="flex flex-wrap gap-3">
+                  {singleClass.equipmentName.map((item, index) => (
+                    <span
+                      key={index}
+                      className="bg-[#E9ECEF] text-slate-700 text-sm font-medium px-4 py-2 rounded-full">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -189,12 +183,9 @@ export default async function ClassDetails() {
             <hr className="border-gray-100 mb-8" />
 
             <div className="flex flex-col gap-5">
-              {classList.map((cls) => (
+              {classes.map((cls) => (
                 <div key={cls.id} className="flex items-center gap-4">
-                  {cls.status === 'completed' && (
-                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                  )}
-                  {cls.status === 'current' && (
+                  {cls.id === singleClass.id ? (
                     <svg
                       className="w-5 h-5 text-primary shrink-0 transform -rotate-90"
                       viewBox="0 0 36 36">
@@ -215,16 +206,13 @@ export default async function ClassDetails() {
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       />
                     </svg>
-                  )}
-                  {cls.status === 'locked' && (
-                    <Lock className="w-5 h-5 text-gray-300 shrink-0" />
+                  ) : (
+                     <CheckCircle2 className="w-5 h-5 text-gray-300 shrink-0" />
                   )}
 
                   <span
                     className={`text-sm font-medium ${
-                      cls.status === 'completed'
-                        ? 'text-gray-500'
-                        : cls.status === 'current'
+                      cls.id === singleClass.id
                           ? 'text-primary'
                           : 'text-gray-500'
                     }`}>

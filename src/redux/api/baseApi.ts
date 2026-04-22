@@ -35,6 +35,6 @@ export const baseApi = createApi({
 
     return result;
   },
-  tagTypes: ['auth', 'user', 'cart'],
+  tagTypes: ['auth', 'user', 'cart', 'lms'],
   endpoints: () => ({}),
 });

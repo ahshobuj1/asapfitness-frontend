@@ -1,7 +1,13 @@
 export type TProgram = {
-  id: number;
+  id: string;
   title: string;
   description: string;
-  image: string;
-  link: string;
+  thumbnailKey: string;
+  totalClasses: number;
+  createdAt: string;
+  updatedAt: string;
+  _count: {
+    classes: number;
+  };
+  thumbnailUrl: string;
 };

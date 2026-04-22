@@ -2,12 +2,16 @@ import Image from 'next/image';
 import {Play} from 'lucide-react';
 import {TClassCard} from '@/types/class';
 
-export function ClassCard({data}: {data: TClassCard}) {
+export function ClassCard({data, onClick}: {data: TClassCard, onClick?: () => void}) {
   return (
-    <div className="group flex flex-col bg-[#F1F3F5] rounded-2xl overflow-hidden cursor-pointer h-full border border-transparent hover:border-gray-200 transition-colors">
+    <div 
+      onClick={onClick}
+      className="group flex flex-col bg-[#F1F3F5] rounded-2xl overflow-hidden cursor-pointer h-full border border-transparent hover:border-gray-200 transition-colors"
+    >
       <div className="relative w-full aspect-16/10 overflow-hidden">
         <Image
-          src={data.image}
+          src={'/images/home/classes/class-1.png'}
+          // src={data.thumbUrl || '/images/home/classes/class-1.png'}
           alt={data.title}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -21,9 +25,11 @@ export function ClassCard({data}: {data: TClassCard}) {
       </div>
 
       <div className="p-6 flex flex-col grow">
-        <h3 className="text-lg font-bold text-slate-900 mb-2">{data.title}</h3>
+        <h3 className="text-lg font-bold text-slate-900 mb-2">
+          Class {data.classOrder}: {data.title}
+        </h3>
         <p className="text-sm text-gray-500 leading-relaxed line-clamp-2">
-          {data.description}
+          {data.subtitle}
         </p>
       </div>
     </div>

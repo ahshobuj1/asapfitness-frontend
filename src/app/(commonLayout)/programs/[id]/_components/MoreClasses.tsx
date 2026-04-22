@@ -1,3 +1,5 @@
+'use client';
+
 import { ClassCard } from '@/components/Shared/ClassCard';
 import {
   Carousel,
@@ -6,47 +8,29 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { TClassCard } from '@/types/class';
+import { useGetClassesByCategoryQuery } from '@/redux/features/lms.api';
 
-const moreClassesData: TClassCard[] = [
-  {
-    id: 1,
-    title: 'Class 2: Foundation Program',
-    description:
-      'Ideal for regular gym-goers who want to maintain and refine their physique.',
-    image: '/images/home/classes/class-1.png',
-  },
-  {
-    id: 2,
-    title: 'Class 3: Cardio Warmup',
-    description:
-      'Ideal for regular gym-goers who want to maintain and refine their physique.',
-    image: '/images/home/classes/class-2.png',
-  },
-  {
-    id: 3,
-    title: 'Class 4: Cool Down',
-    description:
-      'Ideal for regular gym-goers who want to maintain and refine their physique.',
-    image: '/images/home/classes/class-3.png',
-  },
-  {
-    id: 4,
-    title: 'Class 5: Core Strength',
-    description:
-      'Ideal for regular gym-goers who want to maintain and refine their physique.',
-    image: '/images/home/classes/class-2.png',
-  },
-  {
-    id: 5,
-    title: 'Class 6: Advanced Mobility',
-    description:
-      'Ideal for regular gym-goers who want to maintain and refine their physique.',
-    image: '/images/home/classes/class-3.png',
-  },
-];
+export default function MoreClassesSection({
+  categoryId,
+  onSelectClass,
+}: {
+  categoryId: string;
+  onSelectClass: (classId: string) => void;
+}) {
+  const { data: classesData, isLoading } = useGetClassesByCategoryQuery(categoryId);
 
-export default function MoreClassesSection() {
+  if (isLoading) {
+    return (
+      <section className="container mx-auto px-6 py-12 max-w-7xl">
+        <div className="flex justify-center items-center h-48">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      </section>
+    );
+  }
+
+  const classes = classesData?.data || [];
+
   return (
     <section className="container mx-auto px-6 py-12 max-w-7xl">
       <Carousel
@@ -66,11 +50,15 @@ export default function MoreClassesSection() {
         </div>
 
         <CarouselContent className="-ml-4 md:-ml-6">
-          {moreClassesData.map((cls: TClassCard) => (
+          {classes.map((cls) => (
             <CarouselItem
               key={cls.id}
               className="pl-4 md:pl-6 basis-full md:basis-1/2 lg:basis-1/3">
-              <ClassCard key={cls.id} data={cls} />
+              <ClassCard 
+                key={cls.id} 
+                data={cls} 
+                onClick={() => onSelectClass(cls.id)}
+              />
             </CarouselItem>
           ))}
         </CarouselContent>
